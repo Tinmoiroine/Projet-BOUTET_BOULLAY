@@ -6,6 +6,7 @@
         {
             Console.WriteLine("Hello, World!");
             Console.WriteLine("Premier test avec GitHub !");
+            Console.WriteLine("Deuxième test en partant de GitHub");
         }
     }
 }
