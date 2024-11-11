@@ -1,0 +1,14 @@
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\bin\Debug\net6.0\PROJET - BOUTET - BOULLAY.exe
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\bin\Debug\net6.0\PROJET - BOUTET - BOULLAY.deps.json
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\bin\Debug\net6.0\PROJET - BOUTET - BOULLAY.runtimeconfig.json
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\bin\Debug\net6.0\PROJET - BOUTET - BOULLAY.dll
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\bin\Debug\net6.0\PROJET - BOUTET - BOULLAY.pdb
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.AssemblyInfoInputs.cache
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.AssemblyInfo.cs
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.csproj.CoreCompileInputs.cache
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.dll
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\refint\PROJET - BOUTET - BOULLAY.dll
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.pdb
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\PROJET - BOUTET - BOULLAY.genruntimeconfig.cache
+C:\Users\charl\OneDrive\Bureau\Projet-BOUTET_BOULLAY\PROJET - BOUTET - BOULLAY\obj\Debug\net6.0\ref\PROJET - BOUTET - BOULLAY.dll
