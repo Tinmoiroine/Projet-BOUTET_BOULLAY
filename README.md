@@ -23,8 +23,8 @@ SI PROBLEME D'IDENTIFICATION :
 
 Exécutez ces lignes de codes une par une : 
 
-"git config --global user.name "Nom GitHub" "
-"git config --global user.email "Email GitHub" "
+"git config --global user.name "Tinmoiroine" "
+"git config --global user.email "charles.boullay04@gmail.com" "
 
 
 
