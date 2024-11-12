@@ -19,3 +19,9 @@ ATTENTION A BIEN TOUT LIRE !
 5- Une fois cela fait, avertir votre collaborateur !
 
 
+SI PROBLEME D'IDENTIFICATION :
+
+Exécutez ces lignes de codes une par une : 
+
+"git config --global user.name "Nom GitHub" "
+"git config --global user.email "Email GitHub" "
