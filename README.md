@@ -25,3 +25,6 @@ Exécutez ces lignes de codes une par une :
 
 "git config --global user.name "Nom GitHub" "
 "git config --global user.email "Email GitHub" "
+
+
+test !
