@@ -1,5 +1,8 @@
-﻿using System.IO;
-using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
 
 namespace PROJET___BOUTET___BOULLAY
 {
@@ -8,60 +11,59 @@ namespace PROJET___BOUTET___BOULLAY
     /// </summary>
     internal class Plateau
     {
-        //Déclaration des variables (plateau_jeu, lettre, ponderation)
-        private char[,] plateau_jeu; 
+        // Déclaration des variables (plateau_jeu, lettre, ponderation)
+        private char[,] plateau_jeu;
         private Dictionary<char, int[]> lettre;
-        private List<char> ponderation; 
+        private List<char> ponderation;
+
+        public char[,] Vals { get { return this.plateau_jeu; } set { this.plateau_jeu = value; } }
+        public Dictionary<char, int[]> Vars { get { return this.lettre; } set { this.lettre = value; } }
 
         /// <summary>
         /// Constructeur de la classe Plateau.
         /// Celui ci concevoit un input un chemin relatif si le fichier existe. 
-        /// Sinon (si le fichier n'existe pas)e il génère un plateu aléatoire de dimension 8x8.
+        /// Sinon (si le fichier n'existe pas) il génère un plateau aléatoire de dimension 8x8.
         /// </summary>
         /// <param name="fichierExistant"></param>
         /// <param name="path"></param>
         public Plateau(bool fichierExistant, string path = null)
         {
-            plateau_jeu = new char[8,8];  // Selon l'énoncé, on considère que la dimension du plateau ne change pas et reste [8x8]
+            plateau_jeu = new char[8, 8];  // Dimension du plateau fixe à 8x8
             lettre = new Dictionary<char, int[]>(); // On configure les autres variables (lettre, ponderation) 
             ponderation = new List<char>();
 
-            //Lecture du fichier Lettre.txt (situé dans le même fichier que Plateau.cs)
+            // Lecture du fichier Lettres.txt (situé dans le même dossier que Plateau.cs)
             List<string> Lignes_lettres = new List<string>();
-            using (StreamReader sr = new StreamReader("Lettre.txt"))
+            using (StreamReader sr = new StreamReader("Lettres.txt"))
             {
                 string ligne;
-                int i = 0;
                 while ((ligne = sr.ReadLine()) != null)
                 {
                     Lignes_lettres.Add(ligne);
-                    i++;
                 }
             }
 
+            // On remplit le dictionnaire 'lettre' et la liste 'ponderation'
             for (int i = 0; i < Lignes_lettres.Count && i < 26; i++)
             {
-                string[] lettres = Lignes_lettres[i].Split(',');
-                lettre.Add(lettres[0][0], new int[2] { Convert.ToInt32(lettres[1]), Convert.ToInt32(lettres[2]) }); // On ajoute les points dus à chaque lettres.
-                for (int j = 0; j < Convert.ToInt32(lettres[1]); j++) // On ajoute désormais la pondération 
+                string[] lettres = Lignes_lettres[i].Split(';');
+                lettre.Add(lettres[0][0], new int[2] { Convert.ToInt32(lettres[1]), Convert.ToInt32(lettres[2]) });
+                for (int j = 0; j < Convert.ToInt32(lettres[1]); j++)
                 {
                     ponderation.Add(lettres[0][0]);
                 }
-       
             }
 
-            // On teste si le fichier existe (on lit alors le plateau dans le fichier)
+            // Si le fichier existe, on charge le plateau depuis ce fichier
             if (fichierExistant)
             {
                 List<string> lines = new List<string>();
                 using (StreamReader sr = new StreamReader(path))
                 {
                     string line;
-                    int i = 0;
                     while ((line = sr.ReadLine()) != null)
                     {
                         lines.Add(line);
-                        i++;
                     }
                 }
                 for (int i = 0; i < lines.Count && i < 8; i++)
@@ -73,23 +75,20 @@ namespace PROJET___BOUTET___BOULLAY
                     }
                 }
             }
-
-            // Si le fichier n'existe pas, alors génération aléatoire du plateau
             else
             {
-                // On balaye toutes les valeurs de la matrice par une double boucle for()
+                // Génération aléatoire du plateau
+                Random random = new Random();
                 for (int i = 0; i < plateau_jeu.GetLength(0); i++)
                 {
                     for (int j = 0; j < plateau_jeu.GetLength(1); j++)
                     {
-                        Random random = new Random(); // Generation random du plateau 
                         bool autorisation = false;
                         while (!autorisation)
                         {
-                            int rand = random.Next(ponderation.Count); // Recuperation de la lettre ainsi que sa ponderation
+                            int rand = random.Next(ponderation.Count);
                             char lettre_p = ponderation[rand];
-
-                            if (lettre[lettre_p][0] > 1)  // Verification du nombre autorisé de lettres
+                            if (lettre[lettre_p][0] > 1)
                             {
                                 plateau_jeu[i, j] = lettre_p;
                                 lettre[lettre_p][0] -= 1;
@@ -105,32 +104,28 @@ namespace PROJET___BOUTET___BOULLAY
         {
             for (int i = 0; i < plateau_jeu.GetLength(0); i++)
             {
-                Console.ResetColor(); 
-                if (i == 7) { Console.ForegroundColor = ConsoleColor.Blue; } // Pour l'esthétisme, on décide de changer la couleur de la ligne du bas !
+                Console.ResetColor();
+                if (i == 7) { Console.ForegroundColor = ConsoleColor.Blue; }
                 else { Console.ForegroundColor = ConsoleColor.Gray; }
 
                 Console.SetCursorPosition(59, Console.CursorTop);
-                Console.WriteLine("+---+---+---+---+---+---+---+---+"); // On définit la forme du plateau
+                Console.WriteLine("+---+---+---+---+---+---+---+---+");
                 Console.SetCursorPosition(59, Console.CursorTop);
                 string ret = "";
-                // For de balayage ligne
                 for (int j = 0; j < plateau_jeu.GetLength(1); j++)
                 {
                     bool inCoord = false;
 
                     if (coordonnees != null && coordonnees.Count > 0)
                     {
-                        // Check des coordonnées d'override
                         for (int k = 0; k < coordonnees.Count; k++)
                         {
                             int[] coord = coordonnees[k];
-                            // Si dans les coordonnées d'override : affichage modifié
                             if (i == coord[0] && j == coord[1])
                             {
                                 Console.ResetColor();
                                 Console.ForegroundColor = couleur_coordonnees;
                                 inCoord = true;
-                                // Si multiplicateur affichage modifié
                                 if (mult != null && k < mult.Count && mult[k] == true)
                                 {
                                     Console.ForegroundColor = couleur_mult;
@@ -140,7 +135,6 @@ namespace PROJET___BOUTET___BOULLAY
                                 {
                                     Console.Write(((j == 0) ? "|" : "") + coord[2] + "p");
                                 }
-
                                 Console.ResetColor();
                                 if (i == 7)
                                 {
@@ -151,7 +145,6 @@ namespace PROJET___BOUTET___BOULLAY
                         }
                     }
 
-                    // Si pas dans les coordonnées d'override, affichage classique
                     if (!inCoord)
                     {
                         Console.ResetColor();
@@ -164,23 +157,14 @@ namespace PROJET___BOUTET___BOULLAY
 
                 }
                 Console.Write('\n');
-
             }
             Console.SetCursorPosition(59, Console.CursorTop);
-            Console.WriteLine("+---+---+---+---+---+---+---+---+"); // On réitère cette forme de tableau entre chaque ligne.
+            Console.WriteLine("+---+---+---+---+---+---+---+---+");
             Console.ResetColor();
-
         }
 
-        /// <summary>
-        /// La fonction d'override ToString renverra toutes les informations nécessaires sur le plateau (Sa taille en particulier)
-        /// <returns>string de description</returns>
         public override string ToString() { return "Le plateau est de dimension : 8x8"; }
 
-        /// <summary>
-        /// Fonction d'exportation du plateau
-        /// </summary>
-        /// <param name="filename"></param>
         public void ToFile(string filename)
         {
             string[] linesPlateau = new string[8];
@@ -200,21 +184,15 @@ namespace PROJET___BOUTET___BOULLAY
             }
         }
 
-        /// <summary>
-        /// Fonction de lecture du fichier
-        /// </summary>
-        /// <param name="path"></param>
         public void ToRead(string path)
         {
             List<string> lines = new List<string>();
             using (StreamReader sr = new StreamReader(path))
             {
                 string line;
-                int i = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
                     lines.Add(line);
-                    i++;
                 }
             }
             for (int i = 0; i < lines.Count && i < 8; i++)
@@ -227,40 +205,25 @@ namespace PROJET___BOUTET___BOULLAY
             }
         }
 
-        /// <summary>
-        /// Fonction d'initialisation : Recherche dans le plateau
-        /// </summary>
-        /// <param name="mot"></param>
-        /// <returns>Vide si pas trouvé, sinon renvoie les coordonnées</returns>
         public List<int[]> RechercheMot(string mot)
         {
-            if (string.IsNullOrEmpty(mot)) return (null);
+            if (string.IsNullOrEmpty(mot)) return null;
             List<int[]> path = new List<int[]>();
             for (int i = 0; i < 8; i++)
             {
                 if (mot.ToUpper()[0] == plateau_jeu[7, i])
                 {
-                    //Console.WriteLine(i);
                     path = RehercheRecursive(mot.ToUpper().Substring(1), 7, i).Prepend(new int[2] { 7, i }).ToList();
                     bool passed = false;
                     if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; }
                     if (path != null && path.Count == mot.Length && !passed) return path;
                 }
             }
-            return (null);
+            return null;
         }
-        /// <summary>
-        /// Recherche Récursive dans le tableau
-        /// </summary>
-        /// <param name="mot"></param>
-        /// <param name="i"></param>
-        /// <param name="j"></param>
-        /// <returns>Rien si l'on ne trouve pas, sinon renvoie les coordonnées</returns>
+
         private List<int[]> RehercheRecursive(string mot, int i, int j)
         {
-            //Console.WriteLine(mot);
-
-            // Condition d'arret : si mot trouvé en entier revoyer la liste a remplir par la pile d'appel
             if (mot == "")
             {
                 return new List<int[]> { };
@@ -268,55 +231,24 @@ namespace PROJET___BOUTET___BOULLAY
             else
             {
                 List<int[]> path = new List<int[]>();
-                // Si direction suivante contient la bonne lettre :
                 if (i > 0 && plateau_jeu[i - 1, j] == mot[0])
-                {              
-                    path = RehercheRecursive(mot.Substring(1), i - 1, j).Prepend(new int[2] { i - 1, j }).ToList(); // Appel de la recursive sur la case de cette direction et ajout de la coordonnées a la liste recue
+                {
+                    path = RehercheRecursive(mot.Substring(1), i - 1, j).Prepend(new int[2] { i - 1, j }).ToList();
                     bool passed = false;
-                    if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; } // Verification de repassage sur la coordonnée
-                    if (path != null && path.Count == mot.Length && !passed) return path; // Si tout valide : revoyer la nouvelle liste
+                    if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; }
+                    if (!passed) return path;
                 }
-
-                
-                if (j > 0 && plateau_jeu[i, j - 1] == mot[0]) // Pour la direction Gauche
+                if (j > 0 && plateau_jeu[i, j - 1] == mot[0])
                 {
                     path = RehercheRecursive(mot.Substring(1), i, j - 1).Prepend(new int[2] { i, j - 1 }).ToList();
                     bool passed = false;
                     if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; }
-                    if (path != null && path.Count == mot.Length && !passed) return path;
+                    if (!passed) return path;
                 }
-                if (j < 7 && plateau_jeu[i, j + 1] == mot[0]) // Pour la direction Droite
-                {
-                    path = RehercheRecursive(mot.Substring(1), i, j + 1).Prepend(new int[2] { i, j + 1 }).ToList();
-                    bool passed = false;
-                    if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; }
-                    if (path != null && path.Count == mot.Length && !passed) return path;
-                }
-                if (i > 0 && j > 0 && plateau_jeu[i - 1, j - 1] == mot[0]) // Pour la diagonale à Gaucbe
-                {
-                    path = RehercheRecursive(mot.Substring(1), i - 1, j - 1).Prepend(new int[2] { i - 1, j - 1 }).ToList();
-                    bool passed = false;
-                    if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; }
-                    if (path != null && path.Count == mot.Length && !passed) return path;
-                }
-                if (i > 0 && j < 7 && plateau_jeu[i - 1, j + 1] == mot[0]) // Pour la diagonale à Droite
-                {
-                    path = RehercheRecursive(mot.Substring(1), i - 1, j + 1).Prepend(new int[2] { i - 1, j + 1 }).ToList();
-                    bool passed = false;
-                    if (path.Count > 2 && path[2][0] == path[0][0] && path[2][1] == path[0][1]) { passed = true; }
-                    if (path != null && path.Count == mot.Length && !passed) return path;
-                }
+                return path;
             }
-            return new List<int[]> { };
         }
 
-        /// <summary>
-        /// Fontion de mise a jour du tableau animée
-        /// Recupère les coordonnées couplées au score propre a celles-ci et les constante de multiplication des points
-        /// </summary>
-        /// <param name="motFound"></param>
-        /// <param name="multiplicateur"></param>
-        /// <param name="distanceMultiplicateur"></param>
         public void MajAnim(List<int[]> motFound, double multiplicateur, double distanceMultiplicateur)
         {
 
@@ -403,36 +335,40 @@ namespace PROJET___BOUTET___BOULLAY
             }
             Thread.Sleep(100);
 
-            Console.Clear(); // Nettoyage de la console
-            
-            for (int i = motFound.Count - 1; i >= 0; i--) { Animation(motFound[i][0], motFound[i][1]); } // Descente des lettres recursive pour chaque coordonnée
+            Console.Clear();
+            // Initie la descente des lettres recursive pour chaque coordonnée
+            for (int i = motFound.Count - 1; i >= 0; i--)
+            {
+                DropAnim(motFound[i][0], motFound[i][1]);
+            }
         }
 
         /// <summary>
-        /// EFFET CASCADE : Fonction recursive permettant de faire tomber les lettres au dessus de la coordonnée donnée 
+        /// Fonction recursive permettant de faire tomber les lettres au dessus de la coordonnée donnée
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
-        private void Animation(int i, int j)
+        private void DropAnim(int i, int j)
         {
-            // Test de la ligne d'en haut
+            // Si pas a la ligne d'en haut
             if (i != 0)
             {
                 // Echange la lettre du dessus
                 plateau_jeu[i, j] = plateau_jeu[i - 1, j];
                 plateau_jeu[i - 1, j] = ' ';
+                //Console.WriteLine(this.ToString());
 
-                
-                Thread.Sleep(70); // Effet d'attente pour la cascade des lettres vers le bas.
+                // Attente pour l'effet cascade
+                Thread.Sleep(70);
                 Console.SetCursorPosition(Console.WindowLeft, Console.WindowTop);
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine();
-                
-                Afficher_Plateau();// On affiche le tableau
-                Animation(i - 1, j); // Appel de la case superieure et ainsi de suite (Récursivité)
+                // Affiche le tableau
+                Afficher_Plateau();
+                // Appel de la case superieure
+                DropAnim(i - 1, j);
             }
         }
-
     }
 }
