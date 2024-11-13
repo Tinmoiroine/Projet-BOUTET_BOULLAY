@@ -46,12 +46,12 @@ namespace PROJET___BOUTET___BOULLAY
             Console.Clear();
             Console.Write(@"
 
-  BBBBB    OOO     GGGG    GGGG   L       EEEEE
-  B    B  O   O   G       G       L       E    
-  BBBBB   O   O   G  GG   G  GG   L       EEEE 
-  B    B  O   O   G   G   G   G   L       E    
-  BBBBB    OOO    GGGG    GGGG    LLLLL   EEEEE
-
+ 
+                                     JJJJJJJJ  EEEEE   U    U      DDDD    U    U      BBBBB    OOO     GGGG    GGGG   L       EEEEE
+                                         J     E       U    U      D   D   U    U      B    B  O   O   G       G       L       E    
+                                         J     EEEE    U    U      D    D  U    U      BBBBB   O   O   G  GG   G  GG   L       EEEE 
+                                     J   J     E       U    U      D   D   U    U      B    B  O   O   G   G   G   G   L       E    
+                                      JJJ      EEEEE     UU        DDDD      UU        BBBBB    OOO    GGGG    GGGG    LLLLL   EEEEE
                                                     
 ");
 
@@ -220,7 +220,7 @@ namespace PROJET___BOUTET___BOULLAY
 
 
             // Initialisation du dictionnaire (dictionnaire par default de l'annexe)
-            this.dictionnaire = new Dictionnaire("Mots_Français.txt");
+            this.dictionnaire = new Dictionnaire("MotsPossiblesFR.txt");
             Dictionnaire.Tri_QuickSort();
 
             // -----------------------------------------------------------

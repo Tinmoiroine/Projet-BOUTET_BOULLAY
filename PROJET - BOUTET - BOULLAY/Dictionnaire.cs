@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PROJET___BOUTET___BOULLAY
 {
     internal class Dictionnaire
     {
-        // Declaration du dictionnaire (format dictionary pour optimiser le temps de recherche)
+        // Déclaration du dictionnaire (format dictionary pour optimiser le temps de recherche)
         private Dictionary<char, List<string>> dict;
 
-        // Définition des propriétés (get only par securité)
+        // Définition des propriétés (get only par sécurité)
         public Dictionary<char, List<string>> Dict { get { return dict; } }
 
         /// <summary>
@@ -20,42 +19,51 @@ namespace PROJET___BOUTET___BOULLAY
         /// <param name="path"></param>
         public Dictionnaire(string path)
         {
-            // Lecture
+            // Lecture du fichier
             dict = new Dictionary<char, List<string>>();
             List<string> lines = new List<string>();
             using (StreamReader sr = new StreamReader(path))
             {
                 string line;
-                int i = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
                     lines.Add(line);
-                    i++;
                 }
             }
-            // Interpretation (découpe et insère dans la bonne clef du dictionnaire)
+
+            // Interprétation (découpe et insère dans la bonne clé du dictionnaire)
             foreach (string line in lines)
             {
                 string[] mots = line.Split(' ');
                 foreach (string mot in mots)
                 {
-                    if (!dict.ContainsKey(mot[0]))
+                    // Vérification que mot n'est pas vide avant de l'ajouter
+                    if (!string.IsNullOrEmpty(mot))
                     {
-                        dict.Add(mot[0], new List<string>());
+                        // Normalisation du mot en majuscules
+                        char key = char.ToUpper(mot[0]);
+
+                        // Si la clé n'existe pas, on l'ajoute
+                        if (!dict.ContainsKey(key))
+                        {
+                            dict.Add(key, new List<string>());
+                        }
+
+                        // Ajout du mot dans la liste correspondant à la clé
+                        dict[key].Add(mot);
                     }
-                    dict[mot[0]].Add(mot);
                 }
             }
         }
 
         /// <summary>
-        /// Override la fonction to string
+        /// Override de la fonction ToString
         /// </summary>
-        /// <returns>String contenant le nombre de mot par première lettre dans l'ordre alphabétique</returns>
+        /// <returns>String contenant le nombre de mots par première lettre dans l'ordre alphabétique</returns>
         public override string ToString()
         {
-            string ret = "Dictionnaire Francais :\n";
-            foreach (char key in dict.Keys)
+            string ret = "Dictionnaire Français :\n";
+            foreach (char key in dict.Keys.OrderBy(k => k))  // Tri par ordre alphabétique des clés
             {
                 ret += key + ": " + dict[key].Count() + '\n';
             }
@@ -69,18 +77,18 @@ namespace PROJET___BOUTET___BOULLAY
         {
             foreach (char key in dict.Keys)
             {
-                dict[key] = QuickSortlist(dict[key], 0, dict[key].Count - 1);
+                dict[key] = QuickSortList(dict[key], 0, dict[key].Count - 1);
             }
         }
 
         /// <summary>
-        /// Algorithme QuickSort Classique
+        /// Algorithme QuickSort classique
         /// </summary>
         /// <param name="list"></param>
         /// <param name="leftIndex"></param>
         /// <param name="rightIndex"></param>
         /// <returns></returns>
-        private List<string> QuickSortlist(List<string> list, int leftIndex, int rightIndex)
+        private List<string> QuickSortList(List<string> list, int leftIndex, int rightIndex)
         {
             int i = leftIndex;
             int j = rightIndex;
@@ -103,29 +111,28 @@ namespace PROJET___BOUTET___BOULLAY
                 }
             }
             if (leftIndex < j)
-                QuickSortlist(list, leftIndex, j);
+                QuickSortList(list, leftIndex, j);
             if (i < rightIndex)
-                QuickSortlist(list, i, rightIndex);
+                QuickSortList(list, i, rightIndex);
             return list;
         }
 
         /// <summary>
-        /// Intialisation de la recherche réccursive
+        /// Initialisation de la recherche récursive
         /// </summary>
         /// <param name="mot"></param>
         /// <returns>True : mot trouvé; False : mot inexistant</returns>
         public bool RechDichoRecursif(string mot)
         {
-            if (mot != null && mot.Length > 0 && dict.Keys.Contains(mot[0]))
+            if (!string.IsNullOrEmpty(mot) && dict.Keys.Contains(char.ToUpper(mot[0])))
             {
-                return RechercheDicho(mot.ToUpper(), 0, dict[mot.ToUpper()[0]].Count - 1);
+                return RechercheDicho(mot.ToUpper(), 0, dict[char.ToUpper(mot[0])].Count - 1);
             }
-            else
-            { return false; }
+            return false;
         }
 
         /// <summary>
-        /// Recherche dichotomique réccursive d'un mot dans le dictionnaire
+        /// Recherche dichotomique récursive d'un mot dans le dictionnaire
         /// Algorithme de recherche dichotomique classique
         /// </summary>
         /// <param name="mot"></param>
@@ -134,34 +141,27 @@ namespace PROJET___BOUTET___BOULLAY
         /// <returns>True : mot trouvé; False : mot inexistant</returns>
         private bool RechercheDicho(string mot, int mini, int maxi)
         {
-            //DateTime dateTime = DateTime.Now;
-            //Console.WriteLine(mot + " " + mini + " " + dict[mot[0]][mini] + " " + maxi + " " + dict[mot[0]][maxi]);
             if (mini == (maxi + mini) / 2)
             {
                 if (dict[mot[0]][mini] == mot || dict[mot[0]][maxi] == mot)
                 {
                     return true;
                 }
-                else
-                {
-                    //Console.WriteLine(DateTime.Now - dateTime);
-                    return false;
-                }
+                return false;
             }
             else
             {
-                if (dict[mot[0]][(maxi + mini) / 2].CompareTo(mot) < 0)
+                int mid = (maxi + mini) / 2;
+                if (dict[mot[0]][mid].CompareTo(mot) < 0)
                 {
-                    return RechercheDicho(mot, (maxi + mini) / 2, maxi);
+                    return RechercheDicho(mot, mid + 1, maxi);
                 }
-                else if (dict[mot[0]][(maxi + mini) / 2].CompareTo(mot) > 0)
+                else if (dict[mot[0]][mid].CompareTo(mot) > 0)
                 {
-                    return RechercheDicho(mot, mini, (maxi + mini) / 2);
+                    return RechercheDicho(mot, mini, mid - 1);
                 }
                 else
                 {
-                    //Console.WriteLine(DateTime.Now - dateTime);
-                    //Console.WriteLine("research success");
                     return true;
                 }
             }
